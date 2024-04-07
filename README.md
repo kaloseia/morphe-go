@@ -1,2 +1,3 @@
 # morphe-go
-Implementation wrapper to work with Morphe specification data in the Go programming language
+
+Implementation wrapper to work with (Morphe specification)[https://github.com/kaloseia/morphe] data in the Go programming language.

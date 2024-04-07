@@ -1,0 +1,20 @@
+name: Company
+fields:
+  UUID:
+    type: Company.UUID
+    attributes:
+      - immutable
+      - mandatory
+  ID:
+    type: Company.ID
+  FoundedAt:
+    type: Company.FoundedAt
+  Name:
+    type: Company.Name
+  ZipCode:
+    type: Company.Address.ZipCode
+  City:
+    type: Company.Address.City
+related:
+  Person:
+    type: HasMany
