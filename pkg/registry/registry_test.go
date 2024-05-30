@@ -42,11 +42,11 @@ func (suite *RegistryTestSuite) TestLoadModelsFromDirectory() {
 	modelsErr := registry.LoadModelsFromDirectory(suite.ModelsDirPath)
 
 	suite.Nil(modelsErr)
-	suite.Len(registry.Models, 4)
-	suite.Len(registry.Entities, 0)
+	suite.Len(registry.GetAllModels(), 4)
+	suite.Len(registry.GetAllEntities(), 0)
 
-	model0, modelExists0 := registry.Models["Company"]
-	suite.True(modelExists0)
+	model0, modelErr0 := registry.GetModel("Company")
+	suite.Nil(modelErr0)
 	suite.Equal(model0.Name, "Company")
 
 	suite.Len(model0.Fields, 4)
@@ -94,8 +94,8 @@ func (suite *RegistryTestSuite) TestLoadModelsFromDirectory() {
 	suite.True(relatedExists01)
 	suite.Equal(modelRelated01.Type, "HasMany")
 
-	model1, modelExists1 := registry.Models["Address"]
-	suite.True(modelExists1)
+	model1, modelErr1 := registry.GetModel("Address")
+	suite.Nil(modelErr1)
 	suite.Equal(model1.Name, "Address")
 
 	suite.Len(model1.Fields, 3)
@@ -131,8 +131,8 @@ func (suite *RegistryTestSuite) TestLoadModelsFromDirectory() {
 	suite.True(relatedExists10)
 	suite.Equal(modelRelated10.Type, "ForOne")
 
-	model2, modelExists2 := registry.Models["ContactInfo"]
-	suite.True(modelExists2)
+	model2, modelErr2 := registry.GetModel("ContactInfo")
+	suite.Nil(modelErr2)
 	suite.Equal(model2.Name, "ContactInfo")
 
 	suite.Len(model2.Fields, 3)
@@ -165,8 +165,8 @@ func (suite *RegistryTestSuite) TestLoadModelsFromDirectory() {
 	suite.True(relatedExists20)
 	suite.Equal(modelRelated20.Type, "ForOne")
 
-	model3, modelExists3 := registry.Models["Person"]
-	suite.True(modelExists3)
+	model3, modelErr3 := registry.GetModel("Person")
+	suite.Nil(modelErr3)
 	suite.Equal(model3.Name, "Person")
 
 	suite.Len(model3.Fields, 4)
@@ -227,14 +227,14 @@ func (suite *RegistryTestSuite) TestLoadModelsFromDirectory_InvalidDirPath() {
 	modelsErrMsg := modelsErr.Error()
 	suite.Contains(modelsErrMsg, "error reading directory")
 	suite.Contains(modelsErrMsg, "####INVALID/DIR/PATH####")
-	suite.Len(registry.Models, 0)
-	suite.Len(registry.Entities, 0)
+	suite.Len(registry.GetAllModels(), 0)
+	suite.Len(registry.GetAllEntities(), 0)
 }
 
 func (suite *RegistryTestSuite) TestLoadModelsFromDirectory_ConflictingName() {
 	registry := registry.NewRegistry()
 
-	registry.Models["Company"] = yaml.Model{Name: "Company"}
+	registry.SetModel("Company", yaml.Model{Name: "Company"})
 
 	modelsErr := registry.LoadModelsFromDirectory(suite.ModelsDirPath)
 
@@ -252,11 +252,11 @@ func (suite *RegistryTestSuite) TestLoadEntitiesFromDirectory() {
 	entitiesErr := registry.LoadEntitiesFromDirectory(suite.EntitiesDirPath)
 
 	suite.Nil(entitiesErr)
-	suite.Len(registry.Models, 0)
-	suite.Len(registry.Entities, 2)
+	suite.Len(registry.GetAllModels(), 0)
+	suite.Len(registry.GetAllEntities(), 2)
 
-	entity0, entityExists0 := registry.Entities["Company"]
-	suite.True(entityExists0)
+	entity0, entityErr0 := registry.GetEntity("Company")
+	suite.Nil(entityErr0)
 	suite.Equal(entity0.Name, "Company")
 
 	suite.Len(entity0.Fields, 6)
@@ -299,8 +299,8 @@ func (suite *RegistryTestSuite) TestLoadEntitiesFromDirectory() {
 	suite.True(relatedExists00)
 	suite.Equal(entityRelated00.Type, "HasMany")
 
-	entity1, entityExists1 := registry.Entities["Person"]
-	suite.True(entityExists1)
+	entity1, entityErr1 := registry.GetEntity("Person")
+	suite.Nil(entityErr1)
 	suite.Equal(entity1.Name, "Person")
 
 	suite.Len(entity1.Fields, 5)
@@ -348,14 +348,14 @@ func (suite *RegistryTestSuite) TestLoadEntitiesFromDirectory_InvalidDirPath() {
 	entitiesErrMsg := entitiesErr.Error()
 	suite.Contains(entitiesErrMsg, "error reading directory")
 	suite.Contains(entitiesErrMsg, "####INVALID/DIR/PATH####")
-	suite.Len(registry.Models, 0)
-	suite.Len(registry.Entities, 0)
+	suite.Len(registry.GetAllModels(), 0)
+	suite.Len(registry.GetAllEntities(), 0)
 }
 
 func (suite *RegistryTestSuite) TestLoadEntitiesFromDirectory_ConflictingName() {
 	registry := registry.NewRegistry()
 
-	registry.Entities["Company"] = yaml.Entity{Name: "Company"}
+	registry.SetEntity("Company", yaml.Entity{Name: "Company"})
 
 	entitiesErr := registry.LoadEntitiesFromDirectory(suite.EntitiesDirPath)
 
