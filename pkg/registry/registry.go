@@ -3,6 +3,7 @@ package registry
 import (
 	"fmt"
 
+	"github.com/kaloseia/morphe-go/pkg/clone"
 	"github.com/kaloseia/morphe-go/pkg/yaml"
 	"github.com/kaloseia/morphe-go/pkg/yamlfile"
 )
@@ -13,6 +14,15 @@ const EntityFileSuffix = ".ent"
 type Registry struct {
 	Models   map[string]yaml.Model  `yaml:"models"`
 	Entities map[string]yaml.Entity `yaml:"entities"`
+}
+
+func (r *Registry) DeepClone() *Registry {
+	registryCopy := &Registry{
+		Models:   clone.DeepCloneMap(r.Models),
+		Entities: clone.DeepCloneMap(r.Entities),
+	}
+
+	return registryCopy
 }
 
 func (registry *Registry) LoadModelsFromDirectory(dirPath string) error {
