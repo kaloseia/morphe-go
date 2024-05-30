@@ -366,3 +366,27 @@ func (suite *RegistryTestSuite) TestLoadEntitiesFromDirectory_ConflictingName() 
 	conflictPath := filepath.Join(suite.EntitiesDirPath, "company.ent")
 	suite.Contains(entitiesErrMsg, conflictPath)
 }
+
+func (suite *RegistryTestSuite) TestDeepClone() {
+	registry := registry.NewRegistry()
+
+	modelsErr := registry.LoadModelsFromDirectory(suite.ModelsDirPath)
+	suite.Nil(modelsErr)
+
+	entitiesErr := registry.LoadEntitiesFromDirectory(suite.EntitiesDirPath)
+	suite.Nil(entitiesErr)
+
+	registryClone := registry.DeepClone()
+
+	suite.NotSame(registry, registryClone)
+	suite.Equal(registry, registryClone)
+}
+
+func (suite *RegistryTestSuite) TestDeepClone_Empty() {
+	registry := registry.NewRegistry()
+
+	registryClone := registry.DeepClone()
+
+	suite.NotSame(registry, registryClone)
+	suite.Equal(registry, registryClone)
+}
