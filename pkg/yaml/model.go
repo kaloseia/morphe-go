@@ -1,6 +1,10 @@
 package yaml
 
-import "log"
+import (
+	"log"
+
+	"github.com/kaloseia/morphe-go/pkg/clone"
+)
 
 type Model struct {
 	Name        string                     `yaml:"name"`
@@ -9,7 +13,18 @@ type Model struct {
 	Related     map[string]ModelRelation   `yaml:"related"`
 }
 
-func (m *Model) GetIdentifierFields() []ModelField {
+func (m Model) DeepClone() Model {
+	modelCopy := Model{
+		Name:        m.Name,
+		Fields:      clone.DeepCloneMap(m.Fields),
+		Identifiers: clone.DeepCloneMap(m.Identifiers),
+		Related:     clone.DeepCloneMap(m.Related),
+	}
+
+	return modelCopy
+}
+
+func (m Model) GetIdentifierFields() []ModelField {
 	var fields []ModelField
 	for _, identifier := range m.Identifiers {
 		for _, fieldName := range identifier.Fields {

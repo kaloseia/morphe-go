@@ -1,9 +1,18 @@
 package yaml
 
-import "gopkg.in/yaml.v3"
+import (
+	"github.com/kaloseia/morphe-go/pkg/clone"
+	"gopkg.in/yaml.v3"
+)
 
 type ModelIdentifier struct {
 	Fields []string
+}
+
+func (id ModelIdentifier) DeepClone() ModelIdentifier {
+	return ModelIdentifier{
+		Fields: clone.Slice(id.Fields),
+	}
 }
 
 func (id *ModelIdentifier) UnmarshalYAML(value *yaml.Node) error {
