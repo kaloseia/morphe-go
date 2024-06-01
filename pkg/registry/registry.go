@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/kaloseia/morphe-go/pkg/clone"
+	"github.com/kaloseia/clone"
 	"github.com/kaloseia/morphe-go/pkg/yaml"
 	"github.com/kaloseia/morphe-go/pkg/yamlfile"
 )

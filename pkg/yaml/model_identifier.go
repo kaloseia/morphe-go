@@ -1,7 +1,7 @@
 package yaml
 
 import (
-	"github.com/kaloseia/morphe-go/pkg/clone"
+	"github.com/kaloseia/clone"
 	"gopkg.in/yaml.v3"
 )
 
