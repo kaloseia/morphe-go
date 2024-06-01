@@ -3,7 +3,7 @@ package yaml
 import (
 	"log"
 
-	"github.com/kaloseia/morphe-go/pkg/clone"
+	"github.com/kaloseia/clone"
 )
 
 type Model struct {

@@ -1,6 +1,9 @@
 # github.com/davecgh/go-spew v1.1.1
 ## explicit
 github.com/davecgh/go-spew/spew
+# github.com/kaloseia/clone v0.0.0-20240601081950-41de0e12ccb4
+## explicit; go 1.21.6
+github.com/kaloseia/clone
 # github.com/pmezard/go-difflib v1.0.0
 ## explicit
 github.com/pmezard/go-difflib/difflib

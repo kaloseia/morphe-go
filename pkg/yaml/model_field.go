@@ -1,6 +1,6 @@
 package yaml
 
-import "github.com/kaloseia/morphe-go/pkg/clone"
+import "github.com/kaloseia/clone"
 
 type ModelField struct {
 	Type       ModelFieldType `yaml:"type"`
