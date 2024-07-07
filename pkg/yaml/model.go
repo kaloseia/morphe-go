@@ -13,6 +13,19 @@ type Model struct {
 	Related     map[string]ModelRelation   `yaml:"related"`
 }
 
+func (m Model) Validate() error {
+	if m.Name == "" {
+		return ErrNoMorpheModelName
+	}
+	if len(m.Fields) == 0 {
+		return ErrNoMorpheModelFields
+	}
+	if len(m.Identifiers) == 0 {
+		return ErrNoMorpheModelIdentifiers
+	}
+	return nil
+}
+
 func (m Model) DeepClone() Model {
 	modelCopy := Model{
 		Name:        m.Name,
