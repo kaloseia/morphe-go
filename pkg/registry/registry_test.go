@@ -28,8 +28,8 @@ func TestRegistryTestSuite(t *testing.T) {
 func (suite *RegistryTestSuite) SetupTest() {
 	suite.TestDirPath = testutils.GetTestDirPath()
 
-	suite.ModelsDirPath = filepath.Join(suite.TestDirPath, "registry", "models")
-	suite.EntitiesDirPath = filepath.Join(suite.TestDirPath, "registry", "entities")
+	suite.ModelsDirPath = filepath.Join(suite.TestDirPath, "registry", "verbose", "models")
+	suite.EntitiesDirPath = filepath.Join(suite.TestDirPath, "registry", "verbose", "entities")
 }
 
 func (suite *RegistryTestSuite) TearDownTest() {

@@ -1,0 +1,15 @@
+name: Person
+fields:
+  UUID:
+    type: Person.UUID
+    attributes:
+      - immutable
+      - mandatory
+  ID:
+    type: Person.ID
+  FirstName:
+    type: Person.FirstName
+  LastName:
+    type: Person.LastName
+  Email:
+    type: Person.ContactInfo.Email
