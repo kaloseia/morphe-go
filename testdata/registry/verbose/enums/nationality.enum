@@ -1,0 +1,6 @@
+name: Nationality
+type: String
+entries:
+  US: 'American'
+  DE: 'German'
+  FR: 'French'

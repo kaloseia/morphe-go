@@ -1,0 +1,6 @@
+name: Country
+type: String
+entries:
+  US: 'United States'
+  DE: 'Germany'
+  FR: 'France'

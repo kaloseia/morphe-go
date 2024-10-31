@@ -17,6 +17,7 @@ type RegistryTestSuite struct {
 
 	TestDirPath string
 
+	EnumsDirPath    string
 	ModelsDirPath   string
 	EntitiesDirPath string
 }
@@ -28,12 +29,91 @@ func TestRegistryTestSuite(t *testing.T) {
 func (suite *RegistryTestSuite) SetupTest() {
 	suite.TestDirPath = testutils.GetTestDirPath()
 
+	suite.EnumsDirPath = filepath.Join(suite.TestDirPath, "registry", "verbose", "enums")
 	suite.ModelsDirPath = filepath.Join(suite.TestDirPath, "registry", "verbose", "models")
 	suite.EntitiesDirPath = filepath.Join(suite.TestDirPath, "registry", "verbose", "entities")
 }
 
 func (suite *RegistryTestSuite) TearDownTest() {
 	suite.TestDirPath = ""
+}
+
+func (suite *RegistryTestSuite) TestLoadEnumsFromDirectory() {
+	registry := registry.NewRegistry()
+
+	enumsErr := registry.LoadEnumsFromDirectory(suite.EnumsDirPath)
+
+	suite.Nil(enumsErr)
+	suite.Len(registry.GetAllEnums(), 2)
+	suite.Len(registry.GetAllModels(), 0)
+	suite.Len(registry.GetAllEntities(), 0)
+
+	enum0, enumErr0 := registry.GetEnum("Country")
+	suite.Nil(enumErr0)
+	suite.Equal(enum0.Name, "Country")
+	suite.Equal(enum0.Type, yaml.EnumTypeString)
+
+	suite.Len(enum0.Entries, 3)
+
+	entry00, entryExists00 := enum0.Entries["US"]
+	suite.True(entryExists00)
+	suite.Equal(entry00, "United States")
+
+	entry01, entryExists01 := enum0.Entries["DE"]
+	suite.True(entryExists01)
+	suite.Equal(entry01, "Germany")
+
+	entry02, entryExists02 := enum0.Entries["FR"]
+	suite.True(entryExists02)
+	suite.Equal(entry02, "France")
+
+	enum1, enumErr1 := registry.GetEnum("Nationality")
+	suite.Nil(enumErr1)
+	suite.Equal(enum1.Name, "Nationality")
+	suite.Equal(enum1.Type, yaml.EnumTypeString)
+
+	suite.Len(enum1.Entries, 3)
+
+	entry10, entryExists10 := enum1.Entries["US"]
+	suite.True(entryExists10)
+	suite.Equal(entry10, "American")
+
+	entry11, entryExists11 := enum1.Entries["DE"]
+	suite.True(entryExists11)
+	suite.Equal(entry11, "German")
+
+	entry12, entryExists12 := enum1.Entries["FR"]
+	suite.True(entryExists12)
+	suite.Equal(entry12, "French")
+}
+
+func (suite *RegistryTestSuite) TestLoadEnumsFromDirectory_InvalidDirPath() {
+	registry := registry.NewRegistry()
+
+	enumsErr := registry.LoadEnumsFromDirectory("####INVALID/DIR/PATH####")
+
+	suite.NotNil(enumsErr)
+	enumsErrMsg := enumsErr.Error()
+	suite.Contains(enumsErrMsg, "error reading directory")
+	suite.Contains(enumsErrMsg, "####INVALID/DIR/PATH####")
+	suite.Len(registry.GetAllEnums(), 0)
+	suite.Len(registry.GetAllModels(), 0)
+	suite.Len(registry.GetAllEntities(), 0)
+}
+
+func (suite *RegistryTestSuite) TestLoadEnumsFromDirectory_ConflictingName() {
+	registry := registry.NewRegistry()
+
+	registry.SetEnum("Country", yaml.Enum{Name: "Country"})
+
+	enumsErr := registry.LoadEnumsFromDirectory(suite.EnumsDirPath)
+
+	suite.NotNil(enumsErr)
+	enumsErrMsg := enumsErr.Error()
+	suite.Contains(enumsErrMsg, "enum name 'Country' already exists in registry")
+
+	conflictPath := filepath.Join(suite.EnumsDirPath, "country.enum")
+	suite.Contains(enumsErrMsg, conflictPath)
 }
 
 func (suite *RegistryTestSuite) TestLoadModelsFromDirectory() {
