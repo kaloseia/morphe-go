@@ -9,14 +9,45 @@ import (
 	"github.com/kaloseia/morphe-go/pkg/yamlfile"
 )
 
+const EnumFileSuffix = ".enum"
 const ModelFileSuffix = ".mod"
 const EntityFileSuffix = ".ent"
 
 type Registry struct {
 	mutex sync.RWMutex
 
+	enums    map[string]yaml.Enum   `yaml:"enums"`
 	models   map[string]yaml.Model  `yaml:"models"`
 	entities map[string]yaml.Entity `yaml:"entities"`
+}
+
+// SetEnum is a thread-safe way to write an enum to the registry
+func (r *Registry) SetEnum(name string, enum yaml.Enum) {
+	r.mutex.Lock()
+	defer r.mutex.Unlock()
+
+	r.enums[name] = enum
+}
+
+// GetEnum returns a thread-safe copy of a registry enum
+func (r *Registry) GetEnum(name string) (yaml.Enum, error) {
+	r.mutex.RLock()
+	defer r.mutex.RUnlock()
+	enum, enumFound := r.enums[name]
+	if !enumFound {
+		return yaml.Enum{}, fmt.Errorf("enum with name '%s' not found registry", name)
+	}
+	enumClone := enum.DeepClone()
+	return enumClone, nil
+}
+
+// GetAllEnums returns a thread-safe copy of all registry enums
+func (r *Registry) GetAllEnums() map[string]yaml.Enum {
+	r.mutex.RLock()
+	defer r.mutex.RUnlock()
+
+	enumsClone := clone.DeepCloneMap(r.enums)
+	return enumsClone
 }
 
 // SetModel is a thread-safe way to write a model to the registry
@@ -89,6 +120,16 @@ func (r *Registry) DeepClone() *Registry {
 	return registryCopy
 }
 
+func (r *Registry) LoadEnumsFromDirectory(dirPath string) error {
+	allEnums, unmarshalErr := yamlfile.UnmarshalAllYAMLFiles[yaml.Enum](dirPath, EnumFileSuffix)
+	if unmarshalErr != nil {
+		return unmarshalErr
+	}
+
+	loadErr := r.loadEnumDefinitions(allEnums)
+	return loadErr
+}
+
 func (r *Registry) LoadModelsFromDirectory(dirPath string) error {
 	allModels, unmarshalErr := yamlfile.UnmarshalAllYAMLFiles[yaml.Model](dirPath, ModelFileSuffix)
 	if unmarshalErr != nil {
@@ -107,6 +148,25 @@ func (r *Registry) LoadEntitiesFromDirectory(dirPath string) error {
 
 	loadErr := r.loadEntityDefinitions(allEntities)
 	return loadErr
+}
+
+func (r *Registry) loadEnumDefinitions(allEnums map[string]yaml.Enum) error {
+	r.mutex.Lock()
+	defer r.mutex.Unlock()
+
+	if r.enums == nil {
+		r.enums = make(map[string]yaml.Enum)
+	}
+
+	for enumPathAbs, enum := range allEnums {
+		_, nameConflict := r.enums[enum.Name]
+		if nameConflict {
+			return fmt.Errorf("enum name '%s' already exists in registry (conflict: %s)", enum.Name, enumPathAbs)
+		}
+
+		r.enums[enum.Name] = enum
+	}
+	return nil
 }
 
 func (r *Registry) loadModelDefinitions(allModels map[string]yaml.Model) error {
