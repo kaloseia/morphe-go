@@ -6,7 +6,7 @@ import (
 	"github.com/kaloseia/morphe-go/pkg/yaml"
 )
 
-func getModelPrimaryIdentifierFieldName(modelDef yaml.Model) (string, error) {
+func GetModelPrimaryIdentifierFieldName(modelDef yaml.Model) (string, error) {
 	primaryID, hasPrimaryID := modelDef.Identifiers["primary"]
 	if !hasPrimaryID {
 		return "", fmt.Errorf("model '%s' has no defined primary identifier", modelDef.Name)
@@ -18,7 +18,7 @@ func getModelPrimaryIdentifierFieldName(modelDef yaml.Model) (string, error) {
 	return primaryIDFieldName, nil
 }
 
-func getModelFieldDefinitionByName(modelDef yaml.Model, fieldName string) (yaml.ModelField, error) {
+func GetModelFieldDefinitionByName(modelDef yaml.Model, fieldName string) (yaml.ModelField, error) {
 	fieldDef, hasField := modelDef.Fields[fieldName]
 	if !hasField {
 		return yaml.ModelField{}, fmt.Errorf("model '%s' has no defined field '%s'", modelDef.Name, fieldName)
