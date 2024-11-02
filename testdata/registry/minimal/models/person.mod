@@ -8,6 +8,8 @@ fields:
     type: String
   LastName:
     type: String
+  Nationality:
+    type: Nationality
 identifiers:
   primary: ID
   name:
