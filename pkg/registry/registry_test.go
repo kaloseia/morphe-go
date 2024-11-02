@@ -450,6 +450,9 @@ func (suite *RegistryTestSuite) TestLoadEntitiesFromDirectory_ConflictingName() 
 func (suite *RegistryTestSuite) TestDeepClone() {
 	registry := registry.NewRegistry()
 
+	enumsErr := registry.LoadEnumsFromDirectory(suite.EnumsDirPath)
+	suite.Nil(enumsErr)
+
 	modelsErr := registry.LoadModelsFromDirectory(suite.ModelsDirPath)
 	suite.Nil(modelsErr)
 

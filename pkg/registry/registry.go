@@ -113,6 +113,7 @@ func (r *Registry) DeepClone() *Registry {
 	defer r.mutex.RUnlock()
 
 	registryCopy := &Registry{
+		enums:    clone.DeepCloneMap(r.enums),
 		models:   clone.DeepCloneMap(r.models),
 		entities: clone.DeepCloneMap(r.entities),
 	}

@@ -152,6 +152,7 @@ func (suite *LoadMorpheRegistryTestSuite) TestLoadMorpheRegistry() {
 func (suite *LoadMorpheRegistryTestSuite) TestLoadMorpheRegistry_Failure_InvalidPaths() {
 	loadHooks := registry.LoadMorpheRegistryHooks{}
 	config := cfg.MorpheLoadRegistryConfig{
+		RegistryEnumsDirPath:    "invalid path",
 		RegistryModelsDirPath:   "invalid path",
 		RegistryEntitiesDirPath: "invalid path",
 	}
@@ -165,12 +166,14 @@ func (suite *LoadMorpheRegistryTestSuite) TestLoadMorpheRegistry_Failure_Invalid
 func (suite *LoadMorpheRegistryTestSuite) TestLoadMorpheRegistry_StartHook_Successful() {
 	loadHooks := registry.LoadMorpheRegistryHooks{
 		OnRegistryLoadStart: func(config cfg.MorpheLoadRegistryConfig) (cfg.MorpheLoadRegistryConfig, error) {
+			config.RegistryEnumsDirPath = suite.EnumsDirPath
 			config.RegistryModelsDirPath = suite.ModelsDirPath
 			config.RegistryEntitiesDirPath = suite.EntitiesDirPath
 			return config, nil
 		},
 	}
 	config := cfg.MorpheLoadRegistryConfig{
+		RegistryEnumsDirPath:    "invalid path",
 		RegistryModelsDirPath:   "invalid/path",
 		RegistryEntitiesDirPath: "invalid/path",
 	}
@@ -187,7 +190,7 @@ func (suite *LoadMorpheRegistryTestSuite) TestLoadMorpheRegistry_StartHook_Succe
 	suite.True(modelExists0)
 	suite.Equal(model0.Name, "Person")
 
-	suite.Len(model0.Fields, 3)
+	suite.Len(model0.Fields, 4)
 
 	modelField00, fieldExists00 := model0.Fields["ID"]
 	suite.True(fieldExists00)
@@ -204,6 +207,11 @@ func (suite *LoadMorpheRegistryTestSuite) TestLoadMorpheRegistry_StartHook_Succe
 	suite.True(fieldExists02)
 	suite.Equal(modelField02.Type, yaml.ModelFieldTypeString)
 	suite.Len(modelField02.Attributes, 0)
+
+	modelField03, fieldExists03 := model0.Fields["Nationality"]
+	suite.True(fieldExists03)
+	suite.Equal(modelField03.Type, yaml.ModelFieldType("Nationality"))
+	suite.Len(modelField03.Attributes, 0)
 
 	suite.Len(model0.Identifiers, 2)
 	modelIDs00, idsExist00 := model0.Identifiers["primary"]
@@ -260,6 +268,7 @@ func (suite *LoadMorpheRegistryTestSuite) TestLoadMorpheRegistry_StartHook_Failu
 		},
 	}
 	config := cfg.MorpheLoadRegistryConfig{
+		RegistryEnumsDirPath:    suite.EnumsDirPath,
 		RegistryModelsDirPath:   suite.ModelsDirPath,
 		RegistryEntitiesDirPath: suite.EntitiesDirPath,
 	}
@@ -285,6 +294,7 @@ func (suite *LoadMorpheRegistryTestSuite) TestLoadMorpheRegistry_SuccessHook_Suc
 		},
 	}
 	config := cfg.MorpheLoadRegistryConfig{
+		RegistryEnumsDirPath:    suite.EnumsDirPath,
 		RegistryModelsDirPath:   suite.ModelsDirPath,
 		RegistryEntitiesDirPath: suite.EntitiesDirPath,
 	}
@@ -301,7 +311,7 @@ func (suite *LoadMorpheRegistryTestSuite) TestLoadMorpheRegistry_SuccessHook_Suc
 	suite.True(modelExists0)
 	suite.Equal(model0.Name, "Person")
 
-	suite.Len(model0.Fields, 4)
+	suite.Len(model0.Fields, 5)
 
 	modelField00, fieldExists00 := model0.Fields["ID"]
 	suite.True(fieldExists00)
@@ -319,10 +329,15 @@ func (suite *LoadMorpheRegistryTestSuite) TestLoadMorpheRegistry_SuccessHook_Suc
 	suite.Equal(modelField02.Type, yaml.ModelFieldTypeString)
 	suite.Len(modelField02.Attributes, 0)
 
-	modelField03, fieldExists03 := model0.Fields["NewField"]
+	modelField03, fieldExists03 := model0.Fields["Nationality"]
 	suite.True(fieldExists03)
-	suite.Equal(modelField03.Type, yaml.ModelFieldTypeBoolean)
+	suite.Equal(modelField03.Type, yaml.ModelFieldType("Nationality"))
 	suite.Len(modelField03.Attributes, 0)
+
+	modelField04, fieldExists04 := model0.Fields["NewField"]
+	suite.True(fieldExists04)
+	suite.Equal(modelField04.Type, yaml.ModelFieldTypeBoolean)
+	suite.Len(modelField04.Attributes, 0)
 
 	suite.Len(model0.Identifiers, 2)
 	modelIDs00, idsExist00 := model0.Identifiers["primary"]
@@ -379,6 +394,7 @@ func (suite *LoadMorpheRegistryTestSuite) TestLoadMorpheRegistry_SuccessHook_Fai
 		},
 	}
 	config := cfg.MorpheLoadRegistryConfig{
+		RegistryEnumsDirPath:    suite.EnumsDirPath,
 		RegistryModelsDirPath:   suite.ModelsDirPath,
 		RegistryEntitiesDirPath: suite.EntitiesDirPath,
 	}
