@@ -13,7 +13,7 @@ type Model struct {
 	Related     map[string]ModelRelation   `yaml:"related"`
 }
 
-func (m Model) Validate() error {
+func (m Model) Validate(allEnums map[string]Enum) error {
 	if m.Name == "" {
 		return ErrNoMorpheModelName
 	}
@@ -23,6 +23,12 @@ func (m Model) Validate() error {
 	if len(m.Identifiers) == 0 {
 		return ErrNoMorpheModelIdentifiers
 	}
+
+	fieldTypesErr := m.validateFieldTypes(allEnums)
+	if fieldTypesErr != nil {
+		return fieldTypesErr
+	}
+
 	return nil
 }
 
@@ -50,4 +56,20 @@ func (m Model) GetIdentifierFields() []ModelField {
 		}
 	}
 	return fields
+}
+
+func (m Model) validateFieldTypes(allEnums map[string]Enum) error {
+	for fieldName, fieldDef := range m.Fields {
+		fieldType := fieldDef.Type
+		if IsModelFieldTypePrimitive(fieldType) {
+			continue
+		}
+
+		fieldTypeString := string(fieldType)
+		_, enumTypeExists := allEnums[fieldTypeString]
+		if !enumTypeExists {
+			return ErrMorpheModelUnknownFieldType(fieldName, fieldTypeString)
+		}
+	}
+	return nil
 }

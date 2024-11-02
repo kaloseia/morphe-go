@@ -26,6 +26,11 @@ func LoadMorpheRegistry(hooks LoadMorpheRegistryHooks, config cfg.MorpheLoadRegi
 }
 
 func loadConfiguredRegistry(config cfg.MorpheLoadRegistryConfig, r *Registry) error {
+	enumsErr := r.LoadEnumsFromDirectory(config.RegistryEnumsDirPath)
+	if enumsErr != nil {
+		return enumsErr
+	}
+
 	modelsErr := r.LoadModelsFromDirectory(config.RegistryModelsDirPath)
 	if modelsErr != nil {
 		return modelsErr

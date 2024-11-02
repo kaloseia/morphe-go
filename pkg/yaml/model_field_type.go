@@ -1,5 +1,7 @@
 package yaml
 
+import "slices"
+
 type ModelFieldType string
 
 const (
@@ -14,3 +16,20 @@ const (
 	ModelFieldTypeProtected     ModelFieldType = "Protected"
 	ModelFieldTypeSealed        ModelFieldType = "Sealed"
 )
+
+var ModelFieldTypesPrimitive = []ModelFieldType{
+	ModelFieldTypeUUID,
+	ModelFieldTypeAutoIncrement,
+	ModelFieldTypeString,
+	ModelFieldTypeInteger,
+	ModelFieldTypeFloat,
+	ModelFieldTypeBoolean,
+	ModelFieldTypeTime,
+	ModelFieldTypeDate,
+	ModelFieldTypeProtected,
+	ModelFieldTypeSealed,
+}
+
+func IsModelFieldTypePrimitive(t ModelFieldType) bool {
+	return slices.Contains(ModelFieldTypesPrimitive, t)
+}
