@@ -1,6 +1,10 @@
 package yaml
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/kaloseia/go-util/core"
+)
 
 type Enum struct {
 	Name    string         `yaml:"name"`
@@ -44,7 +48,9 @@ func (e Enum) DeepClone() Enum {
 }
 
 func (e Enum) validateAllEntryTypes() error {
-	for entryName, entryValue := range e.Entries {
+	entryNames := core.MapKeysSorted(e.Entries)
+	for _, entryName := range entryNames {
+		entryValue := e.Entries[entryName]
 		validateErr := e.validateEnumEntryValueType(entryName, entryValue)
 		if validateErr != nil {
 			return validateErr
