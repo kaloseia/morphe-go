@@ -36,6 +36,11 @@ func loadConfiguredRegistry(config cfg.MorpheLoadRegistryConfig, r *Registry) er
 		return modelsErr
 	}
 
+	structuresErr := r.LoadStructuresFromDirectory(config.RegistryStructuresDirPath)
+	if structuresErr != nil {
+		return structuresErr
+	}
+
 	entitiesErr := r.LoadEntitiesFromDirectory(config.RegistryEntitiesDirPath)
 	if entitiesErr != nil {
 		return entitiesErr

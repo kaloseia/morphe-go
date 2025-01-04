@@ -17,9 +17,10 @@ type RegistryTestSuite struct {
 
 	TestDirPath string
 
-	EnumsDirPath    string
-	ModelsDirPath   string
-	EntitiesDirPath string
+	EnumsDirPath      string
+	ModelsDirPath     string
+	StructuresDirPath string
+	EntitiesDirPath   string
 }
 
 func TestRegistryTestSuite(t *testing.T) {
@@ -31,6 +32,7 @@ func (suite *RegistryTestSuite) SetupTest() {
 
 	suite.EnumsDirPath = filepath.Join(suite.TestDirPath, "registry", "verbose", "enums")
 	suite.ModelsDirPath = filepath.Join(suite.TestDirPath, "registry", "verbose", "models")
+	suite.StructuresDirPath = filepath.Join(suite.TestDirPath, "registry", "verbose", "structures")
 	suite.EntitiesDirPath = filepath.Join(suite.TestDirPath, "registry", "verbose", "entities")
 }
 
@@ -472,4 +474,68 @@ func (suite *RegistryTestSuite) TestDeepClone_Empty() {
 
 	suite.NotSame(registry, registryClone)
 	suite.Equal(registry, registryClone)
+}
+
+func (suite *RegistryTestSuite) TestLoadStructuresFromDirectory() {
+	registry := registry.NewRegistry()
+
+	structuresErr := registry.LoadStructuresFromDirectory(suite.StructuresDirPath)
+
+	suite.Nil(structuresErr)
+	suite.Len(registry.GetAllStructures(), 1)
+	suite.Len(registry.GetAllEnums(), 0)
+	suite.Len(registry.GetAllModels(), 0)
+	suite.Len(registry.GetAllEntities(), 0)
+
+	structure0, structureErr0 := registry.GetStructure("Address")
+	suite.Nil(structureErr0)
+	suite.Equal(structure0.Name, "Address")
+
+	suite.Len(structure0.Fields, 4)
+
+	structureField00, fieldExists00 := structure0.Fields["Street"]
+	suite.True(fieldExists00)
+	suite.Equal(structureField00.Type, yaml.StructureFieldTypeString)
+
+	structureField01, fieldExists01 := structure0.Fields["HouseNr"]
+	suite.True(fieldExists01)
+	suite.Equal(structureField01.Type, yaml.StructureFieldTypeString)
+
+	structureField02, fieldExists02 := structure0.Fields["ZipCode"]
+	suite.True(fieldExists02)
+	suite.Equal(structureField02.Type, yaml.StructureFieldTypeString)
+
+	structureField03, fieldExists03 := structure0.Fields["City"]
+	suite.True(fieldExists03)
+	suite.Equal(structureField03.Type, yaml.StructureFieldTypeString)
+}
+
+func (suite *RegistryTestSuite) TestLoadStructuresFromDirectory_InvalidDirPath() {
+	registry := registry.NewRegistry()
+
+	structuresErr := registry.LoadStructuresFromDirectory("####INVALID/DIR/PATH####")
+
+	suite.NotNil(structuresErr)
+	structuresErrMsg := structuresErr.Error()
+	suite.Contains(structuresErrMsg, "error reading directory")
+	suite.Contains(structuresErrMsg, "####INVALID/DIR/PATH####")
+	suite.Len(registry.GetAllEnums(), 0)
+	suite.Len(registry.GetAllModels(), 0)
+	suite.Len(registry.GetAllStructures(), 0)
+	suite.Len(registry.GetAllEntities(), 0)
+}
+
+func (suite *RegistryTestSuite) TestLoadStructuresFromDirectory_ConflictingName() {
+	registry := registry.NewRegistry()
+
+	registry.SetStructure("Address", yaml.Structure{Name: "Address"})
+
+	structuresErr := registry.LoadStructuresFromDirectory(suite.StructuresDirPath)
+
+	suite.NotNil(structuresErr)
+	structuresErrMsg := structuresErr.Error()
+	suite.Contains(structuresErrMsg, "structure name 'Address' already exists in registry")
+
+	conflictPath := filepath.Join(suite.StructuresDirPath, "address.str")
+	suite.Contains(structuresErrMsg, conflictPath)
 }

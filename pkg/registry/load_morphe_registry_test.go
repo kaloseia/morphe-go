@@ -18,9 +18,10 @@ type LoadMorpheRegistryTestSuite struct {
 
 	TestDirPath string
 
-	EnumsDirPath    string
-	ModelsDirPath   string
-	EntitiesDirPath string
+	EnumsDirPath      string
+	ModelsDirPath     string
+	StructuresDirPath string
+	EntitiesDirPath   string
 }
 
 func TestLoadMorpheRegistryTestSuite(t *testing.T) {
@@ -32,6 +33,7 @@ func (suite *LoadMorpheRegistryTestSuite) SetupTest() {
 
 	suite.EnumsDirPath = filepath.Join(suite.TestDirPath, "registry", "minimal", "enums")
 	suite.ModelsDirPath = filepath.Join(suite.TestDirPath, "registry", "minimal", "models")
+	suite.StructuresDirPath = filepath.Join(suite.TestDirPath, "registry", "minimal", "structures")
 	suite.EntitiesDirPath = filepath.Join(suite.TestDirPath, "registry", "minimal", "entities")
 }
 
@@ -42,9 +44,10 @@ func (suite *LoadMorpheRegistryTestSuite) TearDownTest() {
 func (suite *LoadMorpheRegistryTestSuite) TestLoadMorpheRegistry() {
 	loadHooks := registry.LoadMorpheRegistryHooks{}
 	config := cfg.MorpheLoadRegistryConfig{
-		RegistryEnumsDirPath:    suite.EnumsDirPath,
-		RegistryModelsDirPath:   suite.ModelsDirPath,
-		RegistryEntitiesDirPath: suite.EntitiesDirPath,
+		RegistryEnumsDirPath:      suite.EnumsDirPath,
+		RegistryModelsDirPath:     suite.ModelsDirPath,
+		RegistryStructuresDirPath: suite.StructuresDirPath,
+		RegistryEntitiesDirPath:   suite.EntitiesDirPath,
 	}
 
 	r, registryErr := registry.LoadMorpheRegistry(loadHooks, config)
@@ -147,6 +150,28 @@ func (suite *LoadMorpheRegistryTestSuite) TestLoadMorpheRegistry() {
 	modelRelated10, relatedExists10 := model1.Related["Person"]
 	suite.True(relatedExists10)
 	suite.Equal(modelRelated10.Type, "ForOne")
+
+	structure0, structureErr0 := r.GetStructure("Address")
+	suite.Nil(structureErr0)
+	suite.Equal(structure0.Name, "Address")
+
+	suite.Len(structure0.Fields, 4)
+
+	structureField00, fieldExists00 := structure0.Fields["Street"]
+	suite.True(fieldExists00)
+	suite.Equal(structureField00.Type, yaml.StructureFieldTypeString)
+
+	structureField01, fieldExists01 := structure0.Fields["HouseNr"]
+	suite.True(fieldExists01)
+	suite.Equal(structureField01.Type, yaml.StructureFieldTypeString)
+
+	structureField02, fieldExists02 := structure0.Fields["ZipCode"]
+	suite.True(fieldExists02)
+	suite.Equal(structureField02.Type, yaml.StructureFieldTypeString)
+
+	structureField03, fieldExists03 := structure0.Fields["City"]
+	suite.True(fieldExists03)
+	suite.Equal(structureField03.Type, yaml.StructureFieldTypeString)
 }
 
 func (suite *LoadMorpheRegistryTestSuite) TestLoadMorpheRegistry_Failure_InvalidPaths() {

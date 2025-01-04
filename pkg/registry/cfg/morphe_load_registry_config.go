@@ -1,9 +1,10 @@
 package cfg
 
 type MorpheLoadRegistryConfig struct {
-	RegistryEnumsDirPath    string
-	RegistryModelsDirPath   string
-	RegistryEntitiesDirPath string
+	RegistryEnumsDirPath      string
+	RegistryModelsDirPath     string
+	RegistryStructuresDirPath string
+	RegistryEntitiesDirPath   string
 }
 
 func (config MorpheLoadRegistryConfig) Validate() error {
@@ -12,6 +13,9 @@ func (config MorpheLoadRegistryConfig) Validate() error {
 	}
 	if config.RegistryModelsDirPath == "" {
 		return ErrNoRegistryModelsDirPath
+	}
+	if config.RegistryStructuresDirPath == "" {
+		return ErrNoRegistryStructuresDirPath
 	}
 	if config.RegistryEntitiesDirPath == "" {
 		return ErrNoRegistryEntitiesDirPath

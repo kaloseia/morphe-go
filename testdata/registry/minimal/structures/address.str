@@ -1,0 +1,10 @@
+name: Address
+fields:
+  Street:
+    type: String
+  HouseNr:
+    type: String
+  ZipCode:
+    type: String
+  City:
+    type: String 
