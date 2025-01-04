@@ -344,9 +344,10 @@ func (suite *LoadMorpheRegistryTestSuite) TestLoadMorpheRegistry_SuccessHook_Suc
 		},
 	}
 	config := cfg.MorpheLoadRegistryConfig{
-		RegistryEnumsDirPath:    suite.EnumsDirPath,
-		RegistryModelsDirPath:   suite.ModelsDirPath,
-		RegistryEntitiesDirPath: suite.EntitiesDirPath,
+		RegistryEnumsDirPath:      suite.EnumsDirPath,
+		RegistryModelsDirPath:     suite.ModelsDirPath,
+		RegistryStructuresDirPath: suite.StructuresDirPath,
+		RegistryEntitiesDirPath:   suite.EntitiesDirPath,
 	}
 
 	r, registryErr := registry.LoadMorpheRegistry(loadHooks, config)
@@ -435,6 +436,28 @@ func (suite *LoadMorpheRegistryTestSuite) TestLoadMorpheRegistry_SuccessHook_Suc
 	modelRelated10, relatedExists10 := model1.Related["Person"]
 	suite.True(relatedExists10)
 	suite.Equal(modelRelated10.Type, "ForOne")
+
+	structure0, structureErr0 := r.GetStructure("Address")
+	suite.Nil(structureErr0)
+	suite.Equal(structure0.Name, "Address")
+
+	suite.Len(structure0.Fields, 4)
+
+	structureField00, fieldExists00 := structure0.Fields["Street"]
+	suite.True(fieldExists00)
+	suite.Equal(structureField00.Type, yaml.StructureFieldTypeString)
+
+	structureField01, fieldExists01 := structure0.Fields["HouseNr"]
+	suite.True(fieldExists01)
+	suite.Equal(structureField01.Type, yaml.StructureFieldTypeString)
+
+	structureField02, fieldExists02 := structure0.Fields["ZipCode"]
+	suite.True(fieldExists02)
+	suite.Equal(structureField02.Type, yaml.StructureFieldTypeString)
+
+	structureField03, fieldExists03 := structure0.Fields["City"]
+	suite.True(fieldExists03)
+	suite.Equal(structureField03.Type, yaml.StructureFieldTypeString)
 }
 
 func (suite *LoadMorpheRegistryTestSuite) TestLoadMorpheRegistry_SuccessHook_Failure() {
