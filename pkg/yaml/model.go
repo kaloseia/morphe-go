@@ -23,6 +23,9 @@ func (m Model) Validate(allEnums map[string]Enum) error {
 	if len(m.Identifiers) == 0 {
 		return ErrNoMorpheModelIdentifiers
 	}
+	if len(allEnums) == 0 {
+		return nil
+	}
 
 	fieldTypesErr := m.validateFieldTypes(allEnums)
 	if fieldTypesErr != nil {
@@ -59,6 +62,9 @@ func (m Model) GetIdentifierFields() []ModelField {
 }
 
 func (m Model) validateFieldTypes(allEnums map[string]Enum) error {
+	if len(allEnums) == 0 {
+		return nil
+	}
 	for fieldName, fieldDef := range m.Fields {
 		fieldType := fieldDef.Type
 		if IsModelFieldTypePrimitive(fieldType) {
