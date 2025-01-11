@@ -13,3 +13,5 @@ fields:
     type: Person.LastName
   Email:
     type: Person.ContactInfo.Email
+identifiers:
+  primary: UUID

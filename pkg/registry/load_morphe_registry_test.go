@@ -172,6 +172,44 @@ func (suite *LoadMorpheRegistryTestSuite) TestLoadMorpheRegistry() {
 	structureField03, fieldExists03 := structure0.Fields["City"]
 	suite.True(fieldExists03)
 	suite.Equal(structureField03.Type, yaml.StructureFieldTypeString)
+
+	entity0, entityErr0 := r.GetEntity("Person")
+	suite.Nil(entityErr0)
+	suite.Equal(entity0.Name, "Person")
+
+	suite.Len(entity0.Fields, 5)
+
+	entityField00, fieldExists00 := entity0.Fields["UUID"]
+	suite.True(fieldExists00)
+	suite.Equal(entityField00.Type, yaml.ModelFieldPath("Person.UUID"))
+	suite.Len(entityField00.Attributes, 2)
+	suite.Contains(entityField00.Attributes, "immutable")
+	suite.Contains(entityField00.Attributes, "mandatory")
+
+	entityField01, fieldExists01 := entity0.Fields["ID"]
+	suite.True(fieldExists01)
+	suite.Equal(entityField01.Type, yaml.ModelFieldPath("Person.ID"))
+	suite.Len(entityField01.Attributes, 0)
+
+	entityField02, fieldExists02 := entity0.Fields["FirstName"]
+	suite.True(fieldExists02)
+	suite.Equal(entityField02.Type, yaml.ModelFieldPath("Person.FirstName"))
+	suite.Len(entityField02.Attributes, 0)
+
+	entityField03, fieldExists03 := entity0.Fields["LastName"]
+	suite.True(fieldExists03)
+	suite.Equal(entityField03.Type, yaml.ModelFieldPath("Person.LastName"))
+	suite.Len(entityField03.Attributes, 0)
+
+	entityField04, fieldExists04 := entity0.Fields["Email"]
+	suite.True(fieldExists04)
+	suite.Equal(entityField04.Type, yaml.ModelFieldPath("Person.ContactInfo.Email"))
+	suite.Len(entityField04.Attributes, 0)
+
+	suite.Len(entity0.Identifiers, 1)
+	entityID00, idExists00 := entity0.Identifiers["primary"]
+	suite.True(idExists00)
+	suite.ElementsMatch(entityID00.Fields, []string{"UUID"})
 }
 
 func (suite *LoadMorpheRegistryTestSuite) TestLoadMorpheRegistry_Failure_InvalidPaths() {
@@ -309,6 +347,44 @@ func (suite *LoadMorpheRegistryTestSuite) TestLoadMorpheRegistry_StartHook_Succe
 	structureField03, fieldExists03 := structure0.Fields["City"]
 	suite.True(fieldExists03)
 	suite.Equal(structureField03.Type, yaml.StructureFieldTypeString)
+
+	entity0, entityErr0 := r.GetEntity("Person")
+	suite.Nil(entityErr0)
+	suite.Equal(entity0.Name, "Person")
+
+	suite.Len(entity0.Fields, 5)
+
+	entityField00, fieldExists00 := entity0.Fields["UUID"]
+	suite.True(fieldExists00)
+	suite.Equal(entityField00.Type, yaml.ModelFieldPath("Person.UUID"))
+	suite.Len(entityField00.Attributes, 2)
+	suite.Contains(entityField00.Attributes, "immutable")
+	suite.Contains(entityField00.Attributes, "mandatory")
+
+	entityField01, fieldExists01 := entity0.Fields["ID"]
+	suite.True(fieldExists01)
+	suite.Equal(entityField01.Type, yaml.ModelFieldPath("Person.ID"))
+	suite.Len(entityField01.Attributes, 0)
+
+	entityField02, fieldExists02 := entity0.Fields["FirstName"]
+	suite.True(fieldExists02)
+	suite.Equal(entityField02.Type, yaml.ModelFieldPath("Person.FirstName"))
+	suite.Len(entityField02.Attributes, 0)
+
+	entityField03, fieldExists03 := entity0.Fields["LastName"]
+	suite.True(fieldExists03)
+	suite.Equal(entityField03.Type, yaml.ModelFieldPath("Person.LastName"))
+	suite.Len(entityField03.Attributes, 0)
+
+	entityField04, fieldExists04 := entity0.Fields["Email"]
+	suite.True(fieldExists04)
+	suite.Equal(entityField04.Type, yaml.ModelFieldPath("Person.ContactInfo.Email"))
+	suite.Len(entityField04.Attributes, 0)
+
+	suite.Len(entity0.Identifiers, 1)
+	entityID00, idExists00 := entity0.Identifiers["primary"]
+	suite.True(idExists00)
+	suite.ElementsMatch(entityID00.Fields, []string{"UUID"})
 }
 
 func (suite *LoadMorpheRegistryTestSuite) TestLoadMorpheRegistry_StartHook_Failure() {
