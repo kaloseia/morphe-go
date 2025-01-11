@@ -170,7 +170,7 @@ func (e Entity) validateTerminalField(model Model, fieldName string, originalFie
 		return nil
 	}
 
-	terminalFieldTypeString := string(fieldType)
+	terminalFieldTypeString := string(terminalField.Type)
 	_, enumExists := allEnums[terminalFieldTypeString]
 	if !enumExists {
 		return ErrUnknownMorpheEntityFieldType(e.Name, fieldName, terminalFieldTypeString)
